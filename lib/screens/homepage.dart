@@ -1,6 +1,9 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
+import 'package:lasagna_app/screens/failedpage.dart';
+import 'package:lasagna_app/screens/successspage.dart';
 import 'package:lasagna_app/widgets/main_button.dart';
+import 'package:page_transition/page_transition.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -102,12 +105,40 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(
                   height: 16,
                 ),
-                MainButton(onTap: () {}, buttonTitleString: 'SEND')
+                MainButton(
+                  onTap: () {
+                    onButtonPress();
+                  },
+                  buttonTitleString: 'SEND',
+                )
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  void onButtonPress() {
+    // unsuccessful("This Error is Caused By Server Please Contact Admin");
+    successful();
+  }
+
+  void successful() {
+    Navigator.push(
+      context,
+      PageTransition(child: const SuccessPage(), type: PageTransitionType.fade),
+    );
+  }
+
+  void unsuccessful(String errorMsg) {
+    Navigator.push(
+      context,
+      PageTransition(
+          child: FailedPage(
+            errorMessage: errorMsg,
+          ),
+          type: PageTransitionType.fade),
     );
   }
 }
