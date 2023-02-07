@@ -1,0 +1,31 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
+class MainButton extends StatelessWidget {
+  const MainButton(
+      {super.key, required this.onTap, required this.buttonTitleString});
+
+  final VoidCallback onTap;
+  final String buttonTitleString;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: SizedBox(
+        // width: 100,
+        child: Platform.isIOS
+            ? CupertinoButton.filled(
+                onPressed: onTap, child: Text(buttonTitleString))
+            : ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF4A148C),
+                ),
+                onPressed: onTap,
+                child: Text(buttonTitleString),
+              ),
+      ),
+    );
+  }
+}
