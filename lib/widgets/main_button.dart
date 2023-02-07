@@ -13,19 +13,19 @@ class MainButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: SizedBox(
-        // width: 100,
-        child: Platform.isIOS
-            ? CupertinoButton.filled(
-                onPressed: onTap, child: Text(buttonTitleString))
-            : ElevatedButton(
+      child: Platform.isIOS
+          ? CupertinoButton.filled(
+              onPressed: onTap, child: Text(buttonTitleString))
+          : SizedBox(
+              width: 100,
+              child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF4A148C),
                 ),
                 onPressed: onTap,
                 child: Text(buttonTitleString),
               ),
-      ),
+            ),
     );
   }
 }
