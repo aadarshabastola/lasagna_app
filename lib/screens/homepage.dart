@@ -1,5 +1,8 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lasagna_app/screens/failedpage.dart';
 import 'package:lasagna_app/screens/successspage.dart';
 import 'package:lasagna_app/widgets/main_button.dart';
@@ -25,6 +28,9 @@ class _HomePageState extends State<HomePage> {
       type: MaskAutoCompletionType.lazy);
 
   final TextEditingController _messageBodyController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
+  final TextEditingController _textBackNumberController =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -32,107 +38,118 @@ class _HomePageState extends State<HomePage> {
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                    padding: const EdgeInsets.only(left: 38),
-                    child: AnimatedTextKit(
-                      repeatForever: false,
-                      isRepeatingAnimation: false,
-                      animatedTexts: [
-                        TyperAnimatedText(
-                          'Send',
-                          textStyle: const TextStyle(
-                            fontSize: 50,
-                            fontFamily: 'Uber',
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF4A148C),
+        body: AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle.light,
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                      padding: const EdgeInsets.only(left: 38),
+                      child: AnimatedTextKit(
+                        repeatForever: false,
+                        isRepeatingAnimation: false,
+                        animatedTexts: [
+                          TyperAnimatedText(
+                            'Send',
+                            textStyle: const TextStyle(
+                              fontSize: 50,
+                              fontFamily: 'Uber',
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF4A148C),
+                            ),
                           ),
-                        ),
-                        TyperAnimatedText(
-                          'Anonymous',
-                          textStyle: const TextStyle(
-                            fontSize: 50,
-                            fontFamily: 'Uber',
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF4A148C),
+                          TyperAnimatedText(
+                            'Anonymous',
+                            textStyle: const TextStyle(
+                              fontSize: 50,
+                              fontFamily: 'Uber',
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF4A148C),
+                            ),
                           ),
-                        ),
-                        TyperAnimatedText(
-                          'Texts.',
-                          textStyle: const TextStyle(
-                            fontSize: 50,
-                            fontFamily: 'Uber',
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF4A148C),
+                          TyperAnimatedText(
+                            'Texts.',
+                            textStyle: const TextStyle(
+                              fontSize: 50,
+                              fontFamily: 'Uber',
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF4A148C),
+                            ),
                           ),
-                        ),
-                        TyperAnimatedText(
-                          'Lasagna',
-                          textStyle: const TextStyle(
-                            fontSize: 50,
-                            fontFamily: 'Uber',
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF4A148C),
+                          TyperAnimatedText(
+                            'Lasagna',
+                            textStyle: const TextStyle(
+                              fontSize: 50,
+                              fontFamily: 'Uber',
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF4A148C),
+                            ),
                           ),
-                        ),
-                      ],
-                    )),
-                const SizedBox(
-                  height: 16,
-                ),
-                TextFormField(
-                  keyboardType: TextInputType.phone,
-                  inputFormatters: [_phoneNumberFormatter],
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    icon: Icon(Icons.call),
-                    hintText: 'Whom do you want to text?',
-                    labelText: 'Phone Number',
+                        ],
+                      )),
+                  const SizedBox(
+                    height: 16,
                   ),
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  textAlignVertical: TextAlignVertical.top,
-                  controller: _messageBodyController,
-                  keyboardType: TextInputType.multiline,
-                  textAlign: TextAlign.start,
-                  minLines: 6,
-                  maxLines: 6,
-                  decoration: const InputDecoration(
-                    alignLabelWithHint: true,
-                    border: OutlineInputBorder(),
-                    icon: Padding(
-                      padding: EdgeInsets.only(bottom: 100),
-                      child: Icon(Icons.email_sharp),
+                  TextFormField(
+                    controller: _phoneNumberController,
+                    keyboardType: TextInputType.phone,
+                    inputFormatters: [_phoneNumberFormatter],
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      icon: defaultTargetPlatform == TargetPlatform.iOS
+                          ? const Icon(CupertinoIcons.phone)
+                          : const Icon(Icons.call_outlined),
+                      hintText: 'Whom do you want to text?',
+                      labelText: 'Phone Number',
                     ),
-                    hintText: 'Message Body',
-                    labelText: 'Message',
                   ),
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  keyboardType: TextInputType.phone,
-                  inputFormatters: [_textBackNumberFormatter],
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    icon: Icon(Icons.phone_callback_sharp),
-                    hintText: 'Phone number for reply texts',
-                    labelText: 'Text Back Number (Optional)',
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    textAlignVertical: TextAlignVertical.top,
+                    controller: _messageBodyController,
+                    keyboardType: TextInputType.multiline,
+                    textAlign: TextAlign.start,
+                    minLines: 6,
+                    maxLines: 6,
+                    decoration: InputDecoration(
+                      alignLabelWithHint: true,
+                      border: const OutlineInputBorder(),
+                      icon: Padding(
+                        padding: const EdgeInsets.only(bottom: 90),
+                        child: defaultTargetPlatform == TargetPlatform.iOS
+                            ? const Icon(CupertinoIcons.mail)
+                            : const Icon(Icons.email_outlined),
+                      ),
+                      hintText: 'Message Body',
+                      labelText: 'Message',
+                    ),
                   ),
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                MainButton(
-                  onTap: () => onButtonPress(),
-                  buttonTitleString: 'SEND',
-                )
-              ],
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _textBackNumberController,
+                    keyboardType: TextInputType.phone,
+                    inputFormatters: [_textBackNumberFormatter],
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      icon: defaultTargetPlatform == TargetPlatform.iOS
+                          ? const Icon(CupertinoIcons.phone_arrow_down_left)
+                          : const Icon(Icons.phone_callback_outlined),
+                      hintText: 'Phone number for reply texts',
+                      labelText: 'Text Back Number (Optional)',
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  MainButton(
+                    onTap: () => onButtonPress(),
+                    buttonTitleString: 'SEND',
+                  )
+                ],
+              ),
             ),
           ),
         ),
@@ -166,6 +183,12 @@ class _HomePageState extends State<HomePage> {
       context,
       PageTransition(child: const SuccessPage(), type: PageTransitionType.fade),
     );
+    _textBackNumberController.clear();
+    _textBackNumberFormatter.clear();
+    _phoneNumberController.clear();
+    _phoneNumberFormatter.clear();
+    _messageBodyController.clear();
+    FocusManager.instance.primaryFocus?.unfocus();
   }
 
   void unsuccessful(String errorMsg) {

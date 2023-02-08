@@ -52,7 +52,7 @@ class FailedPage extends StatelessWidget {
                 animatedTexts: [
                   TyperAnimatedText(
                     speed: const Duration(milliseconds: 15),
-                    'Tap Anywhere to Continue',
+                    '\nTap Anywhere to Dismiss',
                     textStyle: const TextStyle(
                       fontFamily: 'Uber',
                       fontWeight: FontWeight.w500,

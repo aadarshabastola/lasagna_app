@@ -19,7 +19,7 @@ class SuccessPage extends StatelessWidget {
                 isRepeatingAnimation: false,
                 animatedTexts: [
                   TyperAnimatedText(
-                    'Message Sent',
+                    'Message Sent!',
                     textStyle: const TextStyle(
                       fontSize: 50,
                       fontFamily: 'Uber',
