@@ -1,6 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class MainButton extends StatelessWidget {
@@ -13,7 +12,7 @@ class MainButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Platform.isIOS
+      child: defaultTargetPlatform == TargetPlatform.iOS
           ? CupertinoButton.filled(
               onPressed: onTap, child: Text(buttonTitleString))
           : SizedBox(

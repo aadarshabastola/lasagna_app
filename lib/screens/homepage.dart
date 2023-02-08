@@ -4,6 +4,7 @@ import 'package:lasagna_app/screens/failedpage.dart';
 import 'package:lasagna_app/screens/successspage.dart';
 import 'package:lasagna_app/widgets/main_button.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,11 +14,24 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final _phoneNumberFormatter = MaskTextInputFormatter(
+      mask: '(###) ###-####',
+      filter: {"#": RegExp(r'[0-9]')},
+      type: MaskAutoCompletionType.lazy);
+
+  final _textBackNumberFormatter = MaskTextInputFormatter(
+      mask: '(###) ###-####',
+      filter: {"#": RegExp(r'[0-9]')},
+      type: MaskAutoCompletionType.lazy);
+
+  final TextEditingController _messageBodyController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -49,7 +63,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         TyperAnimatedText(
-                          'Texts',
+                          'Texts.',
                           textStyle: const TextStyle(
                             fontSize: 50,
                             fontFamily: 'Uber',
@@ -58,7 +72,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         TyperAnimatedText(
-                          'Lasagna.',
+                          'Lasagna',
                           textStyle: const TextStyle(
                             fontSize: 50,
                             fontFamily: 'Uber',
@@ -73,6 +87,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 TextFormField(
                   keyboardType: TextInputType.phone,
+                  inputFormatters: [_phoneNumberFormatter],
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     icon: Icon(Icons.call),
@@ -82,12 +97,19 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
+                  textAlignVertical: TextAlignVertical.top,
+                  controller: _messageBodyController,
                   keyboardType: TextInputType.multiline,
                   textAlign: TextAlign.start,
-                  maxLines: 5,
+                  minLines: 6,
+                  maxLines: 6,
                   decoration: const InputDecoration(
+                    alignLabelWithHint: true,
                     border: OutlineInputBorder(),
-                    icon: Icon(Icons.email_sharp),
+                    icon: Padding(
+                      padding: EdgeInsets.only(bottom: 100),
+                      child: Icon(Icons.email_sharp),
+                    ),
                     hintText: 'Message Body',
                     labelText: 'Message',
                   ),
@@ -95,6 +117,7 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(height: 16),
                 TextFormField(
                   keyboardType: TextInputType.phone,
+                  inputFormatters: [_textBackNumberFormatter],
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     icon: Icon(Icons.phone_callback_sharp),
@@ -106,9 +129,7 @@ class _HomePageState extends State<HomePage> {
                   height: 16,
                 ),
                 MainButton(
-                  onTap: () {
-                    onButtonPress();
-                  },
+                  onTap: () => onButtonPress(),
                   buttonTitleString: 'SEND',
                 )
               ],
@@ -120,7 +141,23 @@ class _HomePageState extends State<HomePage> {
   }
 
   void onButtonPress() {
-    // unsuccessful("This Error is Caused By Server Please Contact Admin");
+    if (_phoneNumberFormatter.getUnmaskedText().length != 10) {
+      unsuccessful('Please Enter a Valid Number to Send Text To');
+      return;
+    }
+
+    if (_textBackNumberFormatter.getUnmaskedText().isNotEmpty) {
+      if (_textBackNumberFormatter.getUnmaskedText().length != 10) {
+        unsuccessful('Please Enter a Valid Text Back Number');
+        return;
+      }
+    }
+
+    if (_messageBodyController.text.isEmpty) {
+      unsuccessful('Please Enter a Message Body');
+      return;
+    }
+
     successful();
   }
 
