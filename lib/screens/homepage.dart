@@ -11,6 +11,7 @@ import 'package:lasagna_app/widgets/main_button.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:http/http.dart' as http;
+import 'package:textfield_tags/textfield_tags.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,6 +21,27 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  double _distanceToField = 0;
+  TextfieldTagsController _controller = TextfieldTagsController();
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _distanceToField = MediaQuery.of(context).size.width;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextfieldTagsController();
+  }
+
   final _phoneNumberFormatter = MaskTextInputFormatter(
       mask: '(###) ###-####',
       filter: {"#": RegExp(r'[0-9]')},
@@ -34,6 +56,8 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _textBackNumberController =
       TextEditingController();
+
+  final numericRegex = RegExp(r'^-?(([0-9]*)|(([0-9]*)\.([0-9]*)))$');
 
   @override
   Widget build(BuildContext context) {
@@ -96,19 +120,109 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(
                     height: 16,
                   ),
-                  TextFormField(
-                    controller: _phoneNumberController,
-                    keyboardType: TextInputType.phone,
-                    inputFormatters: [_phoneNumberFormatter],
-                    decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
-                      icon: defaultTargetPlatform == TargetPlatform.iOS
-                          ? const Icon(CupertinoIcons.phone)
-                          : const Icon(Icons.call_outlined),
-                      hintText: 'Whom do you want to text?',
-                      labelText: 'Phone Number',
-                    ),
+                  // Chips Trials
+
+                  TextFieldTags(
+                    initialTags: ['1111111111'],
+                    textfieldTagsController: _controller,
+                    textSeparators: const [','],
+                    letterCase: LetterCase.normal,
+                    validator: (String tag) {
+                      if (_controller.getTags!.contains(tag)) {
+                        return 'Number Already Entered';
+                      }
+                      if (tag.length != 10) {
+                        return 'Enter a Valid Phone Number';
+                      }
+                      if (!numericRegex.hasMatch(tag)) {
+                        return 'Phone Number is not a valid';
+                      }
+                      return null;
+                    },
+                    inputfieldBuilder:
+                        (context, tec, fn, error, onChanged, onSubmitted) {
+                      return ((context, sc, tags, onTagDelete) {
+                        return TextField(
+                          focusNode: fn,
+                          controller: tec,
+                          decoration: InputDecoration(
+                            border: const OutlineInputBorder(),
+                            icon: defaultTargetPlatform == TargetPlatform.iOS
+                                ? const Icon(CupertinoIcons.phone)
+                                : const Icon(Icons.call_outlined),
+                            hintText: _controller.hasTags
+                                ? ''
+                                : "Enter Phone Numbers",
+                            errorText: error,
+                            prefixIconConstraints: BoxConstraints(
+                                maxWidth: _distanceToField * 0.74),
+                            prefixIcon: tags.isNotEmpty
+                                ? Padding(
+                                    padding: const EdgeInsets.all(2.0),
+                                    child: SingleChildScrollView(
+                                      controller: sc,
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                          children: tags.map((String tag) {
+                                        return Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey.shade100,
+                                            border: Border.all(
+                                              color: Colors.grey,
+                                              width: 1,
+                                            ),
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                              Radius.circular(4.0),
+                                            ),
+                                            // color: Colors.white,
+                                          ),
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 5.0),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8.0, vertical: 5.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              InkWell(
+                                                child: Text(
+                                                  tag,
+                                                  style: const TextStyle(
+                                                    color: Colors.black87,
+                                                    fontSize: 16,
+                                                  ),
+                                                ),
+                                                onTap: () {
+                                                  //print("$tag selected");
+                                                },
+                                              ),
+                                              const SizedBox(width: 4.0),
+                                              InkWell(
+                                                child: const Icon(
+                                                  Icons.cancel,
+                                                  size: 14.0,
+                                                  color: Colors.grey,
+                                                ),
+                                                onTap: () {
+                                                  onTagDelete(tag);
+                                                },
+                                              )
+                                            ],
+                                          ),
+                                        );
+                                      }).toList()),
+                                    ),
+                                  )
+                                : null,
+                          ),
+                          onChanged: onChanged,
+                          onSubmitted: onSubmitted,
+                        );
+                      });
+                    },
                   ),
+
                   const SizedBox(height: 16),
                   TextFormField(
                     textAlignVertical: TextAlignVertical.top,
@@ -126,8 +240,8 @@ class _HomePageState extends State<HomePage> {
                             ? const Icon(CupertinoIcons.mail)
                             : const Icon(Icons.email_outlined),
                       ),
-                      hintText: 'Message Body',
-                      labelText: 'Message',
+                      hintText: 'Message',
+                      // labelText: 'Message',
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -140,8 +254,8 @@ class _HomePageState extends State<HomePage> {
                       icon: defaultTargetPlatform == TargetPlatform.iOS
                           ? const Icon(CupertinoIcons.phone_arrow_down_left)
                           : const Icon(Icons.phone_callback_outlined),
-                      hintText: 'Phone number for reply texts',
-                      labelText: 'Text Back Number (Optional)',
+                      // hintText: 'Phone number for reply texts',
+                      hintText: 'Text Back Number (Optional)',
                     ),
                   ),
                   const SizedBox(
@@ -161,39 +275,41 @@ class _HomePageState extends State<HomePage> {
   }
 
   void onButtonPress() async {
-    final uri = Uri.parse(serverUrl);
+    // final uri = Uri.parse(serverUrl);
 
-    if (_phoneNumberFormatter.getUnmaskedText().length != 10) {
-      unsuccessful('Please Enter a Valid Number to Send Text To');
-      return;
-    }
+    // if (_phoneNumberFormatter.getUnmaskedText().length != 10) {
+    //   unsuccessful('Please Enter a Valid Number to Send Text To');
+    //   return;
+    // }
 
-    if (_textBackNumberFormatter.getUnmaskedText().isNotEmpty) {
-      if (_textBackNumberFormatter.getUnmaskedText().length != 10) {
-        unsuccessful('Please Enter a Valid Text Back Number');
-        return;
-      }
-    }
+    // if (_textBackNumberFormatter.getUnmaskedText().isNotEmpty) {
+    //   if (_textBackNumberFormatter.getUnmaskedText().length != 10) {
+    //     unsuccessful('Please Enter a Valid Text Back Number');
+    //     return;
+    //   }
+    // }
 
-    if (_messageBodyController.text.isEmpty) {
-      unsuccessful('Please Enter a Message Body');
-      return;
-    }
+    // if (_messageBodyController.text.isEmpty) {
+    //   unsuccessful('Please Enter a Message Body');
+    //   return;
+    // }
 
-    Map<String, String> reqBody = {
-      "firstNumber": _phoneNumberFormatter.getUnmaskedText(),
-      "messageString": _messageBodyController.text,
-      "returnNumber": _textBackNumberFormatter.getUnmaskedText(),
-    };
+    // Map<String, String> reqBody = {
+    //   "firstNumber": _phoneNumberFormatter.getUnmaskedText(),
+    //   "messageString": _messageBodyController.text,
+    //   "returnNumber": _textBackNumberFormatter.getUnmaskedText(),
+    // };
 
-    http.Response response = await http.post(
-      uri,
-      body: reqBody,
-    );
+    // http.Response response = await http.post(
+    //   uri,
+    //   body: reqBody,
+    // );
 
-    var parsedResponse = RequestHelper.getRequest(response);
+    // var parsedResponse = RequestHelper.getRequest(response);
 
-    successful();
+    // successful();
+
+    print(_controller.getTags);
   }
 
   void successful() {
