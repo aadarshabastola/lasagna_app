@@ -3,11 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:lasagna_app/globalvariables.dart';
+import 'package:lasagna_app/helpers/requesthelper.dart';
 import 'package:lasagna_app/screens/failedpage.dart';
 import 'package:lasagna_app/screens/successspage.dart';
 import 'package:lasagna_app/widgets/main_button.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -157,7 +160,9 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void onButtonPress() {
+  void onButtonPress() async {
+    final uri = Uri.parse(serverUrl);
+
     if (_phoneNumberFormatter.getUnmaskedText().length != 10) {
       unsuccessful('Please Enter a Valid Number to Send Text To');
       return;
@@ -174,6 +179,19 @@ class _HomePageState extends State<HomePage> {
       unsuccessful('Please Enter a Message Body');
       return;
     }
+
+    Map<String, String> reqBody = {
+      "firstNumber": _phoneNumberFormatter.getUnmaskedText(),
+      "messageString": _messageBodyController.text,
+      "returnNumber": _textBackNumberFormatter.getUnmaskedText(),
+    };
+
+    http.Response response = await http.post(
+      uri,
+      body: reqBody,
+    );
+
+    var parsedResponse = RequestHelper.getRequest(response);
 
     successful();
   }
