@@ -151,7 +151,7 @@ class _HomePageState extends State<HomePage> {
                                   : "Enter Phone Numbers",
                               errorText: error,
                               prefixIconConstraints: BoxConstraints(
-                                  maxWidth: _distanceToField * 0.74),
+                                  maxWidth: _distanceToField * 0.60),
                               prefixIcon: tags.isNotEmpty
                                   ? Padding(
                                       padding: const EdgeInsets.all(2.0),
