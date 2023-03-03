@@ -312,7 +312,11 @@ class _HomePageState extends State<HomePage> {
       body: reqBody,
     );
 
-    var parsedResponse = RequestHelper.getRequest(response);
+    // Await for the response, then return error or success
+
+    var parsedResponse = await RequestHelper.getRequest(response);
+
+    print(parsedResponse);
 
     successful();
   }
