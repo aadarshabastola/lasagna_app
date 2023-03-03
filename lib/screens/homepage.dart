@@ -43,9 +43,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   final _phoneNumberFormatter = MaskTextInputFormatter(
-      mask: '(###) ###-####',
-      filter: {"#": RegExp(r'[0-9]')},
-      type: MaskAutoCompletionType.lazy);
+      mask: '(###) ###-####,',
+      // filter: {"#": RegExp(r'[0-9]')},
+      type: MaskAutoCompletionType.eager);
 
   final _textBackNumberFormatter = MaskTextInputFormatter(
       mask: '(###) ###-####',
@@ -57,8 +57,6 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _textBackNumberController =
       TextEditingController();
 
-  final numericRegex = RegExp(r'^-?(([0-9]*)|(([0-9]*)\.([0-9]*)))$');
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -68,204 +66,202 @@ class _HomePageState extends State<HomePage> {
         body: AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle.light,
           child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                      padding: const EdgeInsets.only(left: 38),
-                      child: AnimatedTextKit(
-                        repeatForever: false,
-                        isRepeatingAnimation: false,
-                        animatedTexts: [
-                          TyperAnimatedText(
-                            'Send',
-                            textStyle: const TextStyle(
-                              fontSize: 50,
-                              fontFamily: 'Uber',
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF4A148C),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                        padding: const EdgeInsets.only(left: 38),
+                        child: AnimatedTextKit(
+                          repeatForever: false,
+                          isRepeatingAnimation: false,
+                          animatedTexts: [
+                            TyperAnimatedText(
+                              'Send',
+                              textStyle: const TextStyle(
+                                fontSize: 50,
+                                fontFamily: 'Uber',
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF4A148C),
+                              ),
                             ),
-                          ),
-                          TyperAnimatedText(
-                            'Anonymous',
-                            textStyle: const TextStyle(
-                              fontSize: 50,
-                              fontFamily: 'Uber',
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF4A148C),
+                            TyperAnimatedText(
+                              'Anonymous',
+                              textStyle: const TextStyle(
+                                fontSize: 50,
+                                fontFamily: 'Uber',
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF4A148C),
+                              ),
                             ),
-                          ),
-                          TyperAnimatedText(
-                            'Texts.',
-                            textStyle: const TextStyle(
-                              fontSize: 50,
-                              fontFamily: 'Uber',
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF4A148C),
+                            TyperAnimatedText(
+                              'Texts.',
+                              textStyle: const TextStyle(
+                                fontSize: 50,
+                                fontFamily: 'Uber',
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF4A148C),
+                              ),
                             ),
-                          ),
-                          TyperAnimatedText(
-                            'Lasagna',
-                            textStyle: const TextStyle(
-                              fontSize: 50,
-                              fontFamily: 'Uber',
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF4A148C),
+                            TyperAnimatedText(
+                              'Lasagna',
+                              textStyle: const TextStyle(
+                                fontSize: 50,
+                                fontFamily: 'Uber',
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF4A148C),
+                              ),
                             ),
-                          ),
-                        ],
-                      )),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  // Chips Trials
+                          ],
+                        )),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    // Chips Trials
 
-                  TextFieldTags(
-                    initialTags: ['1111111111'],
-                    textfieldTagsController: _controller,
-                    textSeparators: const [','],
-                    letterCase: LetterCase.normal,
-                    validator: (String tag) {
-                      if (_controller.getTags!.contains(tag)) {
-                        return 'Number Already Entered';
-                      }
-                      if (tag.length != 10) {
-                        return 'Enter a Valid Phone Number';
-                      }
-                      if (!numericRegex.hasMatch(tag)) {
-                        return 'Phone Number is not a valid';
-                      }
-                      return null;
-                    },
-                    inputfieldBuilder:
-                        (context, tec, fn, error, onChanged, onSubmitted) {
-                      return ((context, sc, tags, onTagDelete) {
-                        return TextField(
-                          focusNode: fn,
-                          controller: tec,
-                          decoration: InputDecoration(
-                            border: const OutlineInputBorder(),
-                            icon: defaultTargetPlatform == TargetPlatform.iOS
-                                ? const Icon(CupertinoIcons.phone)
-                                : const Icon(Icons.call_outlined),
-                            hintText: _controller.hasTags
-                                ? ''
-                                : "Enter Phone Numbers",
-                            errorText: error,
-                            prefixIconConstraints: BoxConstraints(
-                                maxWidth: _distanceToField * 0.74),
-                            prefixIcon: tags.isNotEmpty
-                                ? Padding(
-                                    padding: const EdgeInsets.all(2.0),
-                                    child: SingleChildScrollView(
-                                      controller: sc,
-                                      scrollDirection: Axis.horizontal,
-                                      child: Row(
-                                          children: tags.map((String tag) {
-                                        return Container(
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey.shade100,
-                                            border: Border.all(
-                                              color: Colors.grey,
-                                              width: 1,
+                    TextFieldTags(
+                      textfieldTagsController: _controller,
+                      textSeparators: const [
+                        ',',
+                      ],
+                      letterCase: LetterCase.normal,
+                      validator: (String tag) {
+                        if (_controller.getTags!.contains(tag)) {
+                          return 'Number Already Entered';
+                        }
+                        return null;
+                      },
+                      inputfieldBuilder:
+                          (context, tec, fn, error, onChanged, onSubmitted) {
+                        return ((context, sc, tags, onTagDelete) {
+                          return TextField(
+                            inputFormatters: [_phoneNumberFormatter],
+                            focusNode: fn,
+                            controller: tec,
+                            keyboardType: TextInputType.phone,
+                            decoration: InputDecoration(
+                              border: const OutlineInputBorder(),
+                              icon: defaultTargetPlatform == TargetPlatform.iOS
+                                  ? const Icon(CupertinoIcons.phone)
+                                  : const Icon(Icons.call_outlined),
+                              hintText: _controller.hasTags
+                                  ? ''
+                                  : "Enter Phone Numbers",
+                              errorText: error,
+                              prefixIconConstraints: BoxConstraints(
+                                  maxWidth: _distanceToField * 0.74),
+                              prefixIcon: tags.isNotEmpty
+                                  ? Padding(
+                                      padding: const EdgeInsets.all(2.0),
+                                      child: SingleChildScrollView(
+                                        controller: sc,
+                                        scrollDirection: Axis.horizontal,
+                                        child: Row(
+                                            children: tags.map((String tag) {
+                                          return Container(
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey.shade100,
+                                              border: Border.all(
+                                                color: Colors.grey,
+                                                width: 1,
+                                              ),
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                Radius.circular(4.0),
+                                              ),
+                                              // color: Colors.white,
                                             ),
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                              Radius.circular(4.0),
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 5.0),
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 2,
+                                              vertical: 5.0,
                                             ),
-                                            // color: Colors.white,
-                                          ),
-                                          margin: const EdgeInsets.symmetric(
-                                              horizontal: 5.0),
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 8.0, vertical: 5.0),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              InkWell(
-                                                child: Text(
-                                                  tag,
-                                                  style: const TextStyle(
-                                                    color: Colors.black87,
-                                                    fontSize: 16,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                InkWell(
+                                                  child: Text(
+                                                    tag,
+                                                    style: const TextStyle(
+                                                      color: Colors.black87,
+                                                      fontSize: 16,
+                                                    ),
                                                   ),
                                                 ),
-                                                onTap: () {
-                                                  //print("$tag selected");
-                                                },
-                                              ),
-                                              const SizedBox(width: 4.0),
-                                              InkWell(
-                                                child: const Icon(
-                                                  Icons.cancel,
-                                                  size: 14.0,
-                                                  color: Colors.grey,
-                                                ),
-                                                onTap: () {
-                                                  onTagDelete(tag);
-                                                },
-                                              )
-                                            ],
-                                          ),
-                                        );
-                                      }).toList()),
-                                    ),
-                                  )
-                                : null,
-                          ),
-                          onChanged: onChanged,
-                          onSubmitted: onSubmitted,
-                        );
-                      });
-                    },
-                  ),
+                                                const SizedBox(width: 4.0),
+                                                InkWell(
+                                                  child: const Icon(
+                                                    Icons.cancel,
+                                                    size: 14.0,
+                                                    color: Colors.grey,
+                                                  ),
+                                                  onTap: () {
+                                                    onTagDelete(tag);
+                                                  },
+                                                )
+                                              ],
+                                            ),
+                                          );
+                                        }).toList()),
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                            onChanged: onChanged,
+                          );
+                        });
+                      },
+                    ),
 
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    textAlignVertical: TextAlignVertical.top,
-                    controller: _messageBodyController,
-                    keyboardType: TextInputType.multiline,
-                    textAlign: TextAlign.start,
-                    minLines: 6,
-                    maxLines: 6,
-                    decoration: InputDecoration(
-                      alignLabelWithHint: true,
-                      border: const OutlineInputBorder(),
-                      icon: Padding(
-                        padding: const EdgeInsets.only(bottom: 90),
-                        child: defaultTargetPlatform == TargetPlatform.iOS
-                            ? const Icon(CupertinoIcons.mail)
-                            : const Icon(Icons.email_outlined),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      textAlignVertical: TextAlignVertical.top,
+                      controller: _messageBodyController,
+                      keyboardType: TextInputType.multiline,
+                      textAlign: TextAlign.start,
+                      minLines: 6,
+                      maxLines: 6,
+                      decoration: InputDecoration(
+                        alignLabelWithHint: true,
+                        border: const OutlineInputBorder(),
+                        icon: Padding(
+                          padding: const EdgeInsets.only(bottom: 90),
+                          child: defaultTargetPlatform == TargetPlatform.iOS
+                              ? const Icon(CupertinoIcons.mail)
+                              : const Icon(Icons.email_outlined),
+                        ),
+                        hintText: 'Message',
+                        // labelText: 'Message',
                       ),
-                      hintText: 'Message',
-                      // labelText: 'Message',
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _textBackNumberController,
-                    keyboardType: TextInputType.phone,
-                    inputFormatters: [_textBackNumberFormatter],
-                    decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
-                      icon: defaultTargetPlatform == TargetPlatform.iOS
-                          ? const Icon(CupertinoIcons.phone_arrow_down_left)
-                          : const Icon(Icons.phone_callback_outlined),
-                      // hintText: 'Phone number for reply texts',
-                      hintText: 'Text Back Number (Optional)',
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _textBackNumberController,
+                      keyboardType: TextInputType.phone,
+                      inputFormatters: [_textBackNumberFormatter],
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        icon: defaultTargetPlatform == TargetPlatform.iOS
+                            ? const Icon(CupertinoIcons.phone_arrow_down_left)
+                            : const Icon(Icons.phone_callback_outlined),
+                        // hintText: 'Phone number for reply texts',
+                        hintText: 'Text Back Number (Optional)',
+                      ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  MainButton(
-                    onTap: () => onButtonPress(),
-                    buttonTitleString: 'SEND',
-                  )
-                ],
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    MainButton(
+                      onTap: () => onButtonPress(),
+                      buttonTitleString: 'SEND',
+                    )
+                  ],
+                ),
               ),
             ),
           ),
@@ -275,41 +271,50 @@ class _HomePageState extends State<HomePage> {
   }
 
   void onButtonPress() async {
-    // final uri = Uri.parse(serverUrl);
+    final uri = Uri.parse(serverUrl);
 
-    // if (_phoneNumberFormatter.getUnmaskedText().length != 10) {
-    //   unsuccessful('Please Enter a Valid Number to Send Text To');
-    //   return;
-    // }
+    List<String>? unformattedPhoneNumberList = _controller.getTags;
+    List<String>? formattedList = [];
 
-    // if (_textBackNumberFormatter.getUnmaskedText().isNotEmpty) {
-    //   if (_textBackNumberFormatter.getUnmaskedText().length != 10) {
-    //     unsuccessful('Please Enter a Valid Text Back Number');
-    //     return;
-    //   }
-    // }
+    for (String phoneNumber in unformattedPhoneNumberList!) {
+      String formattedString = phoneNumber.replaceAll(RegExp('[^0-9]'), '');
+      formattedList.add(formattedString);
+    }
 
-    // if (_messageBodyController.text.isEmpty) {
-    //   unsuccessful('Please Enter a Message Body');
-    //   return;
-    // }
+    if (formattedList.isEmpty) {
+      unsuccessful('Please at least one Phone Number to Send to');
+      return;
+    }
 
-    // Map<String, String> reqBody = {
-    //   "firstNumber": _phoneNumberFormatter.getUnmaskedText(),
-    //   "messageString": _messageBodyController.text,
-    //   "returnNumber": _textBackNumberFormatter.getUnmaskedText(),
-    // };
+    if (_textBackNumberFormatter.getUnmaskedText().isNotEmpty) {
+      if (_textBackNumberFormatter.getUnmaskedText().length != 10) {
+        unsuccessful('Please Enter a Valid Text Back Number');
+        return;
+      }
+    }
 
-    // http.Response response = await http.post(
-    //   uri,
-    //   body: reqBody,
-    // );
+    if (_messageBodyController.text.isEmpty) {
+      unsuccessful('Please Enter a Message Body');
+      return;
+    }
 
-    // var parsedResponse = RequestHelper.getRequest(response);
+    Map<String, String> reqBody = {
+      "messageString": _messageBodyController.text,
+      "returnNumber": _textBackNumberFormatter.getUnmaskedText(),
+    };
 
-    // successful();
+    for (int index = 0; index < formattedList.length; index++) {
+      reqBody.addAll({"phoneNummber[$index]": formattedList[index]});
+    }
 
-    print(_controller.getTags);
+    http.Response response = await http.post(
+      uri,
+      body: reqBody,
+    );
+
+    var parsedResponse = RequestHelper.getRequest(response);
+
+    successful();
   }
 
   void successful() {
@@ -322,6 +327,7 @@ class _HomePageState extends State<HomePage> {
     _phoneNumberController.clear();
     _phoneNumberFormatter.clear();
     _messageBodyController.clear();
+    _controller.clearTags();
     FocusManager.instance.primaryFocus?.unfocus();
   }
 
