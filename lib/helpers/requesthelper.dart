@@ -13,7 +13,7 @@ class RequestHelper {
         return 'Failed';
       }
     } catch (e) {
-      return 'Failed';
+      return e.toString();
     }
   }
 }
