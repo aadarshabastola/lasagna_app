@@ -4,10 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lasagna_app/globalvariables.dart';
-import 'package:lasagna_app/helpers/requesthelper.dart';
 import 'package:lasagna_app/screens/failedpage.dart';
 import 'package:lasagna_app/screens/successspage.dart';
 import 'package:lasagna_app/widgets/main_button.dart';
+import 'package:lasagna_app/widgets/progress_dialog.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:http/http.dart' as http;
@@ -278,6 +278,7 @@ class _HomePageState extends State<HomePage> {
     List<String>? unformattedPhoneNumberList = _controller.getTags;
     List<String>? formattedList = [];
 
+    // Conditions to check UI failures
     for (String phoneNumber in unformattedPhoneNumberList!) {
       String formattedString = phoneNumber.replaceAll(RegExp('[^0-9]'), '');
       formattedList.add(formattedString);
@@ -300,27 +301,45 @@ class _HomePageState extends State<HomePage> {
       return;
     }
 
+    // get comma delimited phone numbers
+    String commaDelimitedString = formattedList.join(", ");
+
     Map<String, String> reqBody = {
+      "firstNumber": commaDelimitedString,
       "messageString": _messageBodyController.text,
       "returnNumber": _textBackNumberFormatter.getUnmaskedText(),
     };
 
-    for (int index = 0; index < formattedList.length; index++) {
-      reqBody.addAll({"phoneNummber[$index]": formattedList[index]});
-    }
+    print(reqBody);
 
     http.Response response = await http.post(
       uri,
       body: reqBody,
     );
 
+    if (context.mounted) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) => const ProgressDialog(),
+      );
+    }
+
+    if (context.mounted) {
+      Navigator.pop(context);
+    }
+
     // Await for the response, then return error or success
+    if (response.statusCode == 200) {
+      successful();
+      return;
+    } else {
+      unsuccessful("Error: ${response.statusCode}, contact Support");
+    }
 
-    var parsedResponse = await RequestHelper.getRequest(response);
+    // if (context.mounted) {
 
-    print(parsedResponse);
-
-    successful();
+    // }
   }
 
   void successful() {
